@@ -1,0 +1,22 @@
+{
+  "name": "@requester/cache",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "ioredis": "^5.10.1"
+  }
+}

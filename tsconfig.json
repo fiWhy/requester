@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "include": ["packages/**/src/**/*.ts", "apps/**/*.ts", "webpack.config.cjs"],
+  "exclude": ["node_modules", "dist", "packages/**/dist"]
+}
