@@ -21,6 +21,9 @@ export class Website {
   @Column({ length: 255 })
   name!: string;
 
+  @Column()
+  publisherId!: number;
+
   @CreateDateColumn()
   created_at!: Date;
 

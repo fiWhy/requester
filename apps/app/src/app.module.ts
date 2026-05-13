@@ -6,11 +6,17 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { PublishersModule } from './publishers/publishers.module.js';
 import { WebsitesModule } from './websites/websites.module.js';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 configDotenv();
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot({
+      wildcard: true,
+      delimiter: ':',
+      maxListeners: 10,
+    }),
     CacheModule.register({
       type: CacheModuleType.Redis,
       url: process.env.CACHE_URL!,

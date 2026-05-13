@@ -25,23 +25,35 @@ export class CacheInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> {
+    const request: {
+      params: {
+        id?: string;
+      };
+    } = context.switchToHttp().getRequest();
+
     const options = this.reflector.get<CacheableOptions>(
       CACHEABLE_METADATA_KEY,
       context.getHandler(),
     );
 
-    const evictKey = this.reflector.get<string>(
+    const evictKeys = this.reflector.get<string[]>(
       CACHE_EVICT_METADATA_KEY,
       context.getHandler(),
     );
 
     console.log('CacheInterceptor: Intercepting request...');
 
-    if (evictKey) {
-      console.log(`CacheInterceptor: Evicting cache for key: ${evictKey}`);
-      return from(this.cacheService.del(evictKey)).pipe(
-        switchMap(() => next.handle()),
+    if (evictKeys) {
+      console.log(
+        `CacheInterceptor: Evicting cache for keys: ${evictKeys.join(', ')}`,
       );
+      return from(
+        Promise.all(
+          evictKeys.map((key) =>
+            this.cacheService.del(key.replace(':id', `:${request.params.id}`)),
+          ),
+        ),
+      ).pipe(switchMap(() => next.handle()));
     }
 
     if (!options) {
@@ -54,11 +66,6 @@ export class CacheInterceptor implements NestInterceptor {
 
     let cacheKey = options.key;
     const ttl = options.ttl;
-    const request: {
-      params: {
-        id?: string;
-      };
-    } = context.switchToHttp().getRequest();
 
     if (cacheKey.includes(':id') && request.params.id) {
       cacheKey = cacheKey.replace(':id', `:${request.params.id}`);

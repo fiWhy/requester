@@ -33,21 +33,19 @@ export class WebsitesController {
   }
 
   @Post()
-  @CacheEvict(WEBSITES_LIST_CACHE_KEY)
+  @CacheEvict([WEBSITES_LIST_CACHE_KEY])
   create(@Body() website: CreateWebsiteDto) {
     return this.websitesService.create(website);
   }
 
   @Patch(':id')
-  @CacheEvict(WEBSITES_LIST_CACHE_KEY)
-  @CacheEvict(WEBSITE_CACHE_KEY)
+  @CacheEvict([WEBSITES_LIST_CACHE_KEY, WEBSITE_CACHE_KEY])
   update(@Param('id') id: number, @Body() website: UpdateWebsiteDto) {
     return this.websitesService.update(id, website);
   }
 
   @Delete(':id')
-  @CacheEvict(WEBSITES_LIST_CACHE_KEY)
-  @CacheEvict(WEBSITE_CACHE_KEY)
+  @CacheEvict([WEBSITES_LIST_CACHE_KEY, WEBSITE_CACHE_KEY])
   delete(@Param('id') id: number) {
     return this.websitesService.delete(id);
   }

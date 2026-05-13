@@ -11,6 +11,7 @@ import { Cacheable, CacheEvict } from '@requester/cache';
 import { CreatePublisherDto } from './dto/create-publisher.dto.js';
 import {
   PUBLISHER_CACHE_KEY,
+  PUBLISHER_WEBSITES_CACHE_KEY,
   PUBLISHERS_LIST_CACHE_KEY,
 } from './publishers.constants.js';
 import { PublishersService } from './publishers.service.js';
@@ -27,7 +28,7 @@ export class PublishersController {
   }
 
   @Post()
-  @CacheEvict(PUBLISHERS_LIST_CACHE_KEY)
+  @CacheEvict([PUBLISHERS_LIST_CACHE_KEY])
   create(@Body() publisher: CreatePublisherDto) {
     return this.publishersService.create(publisher);
   }
@@ -39,16 +40,24 @@ export class PublishersController {
   }
 
   @Patch(':id')
-  @CacheEvict(PUBLISHERS_LIST_CACHE_KEY)
-  @CacheEvict(PUBLISHER_CACHE_KEY)
+  @CacheEvict([PUBLISHERS_LIST_CACHE_KEY, PUBLISHER_CACHE_KEY])
   update(@Param('id') id: number, @Body() publisher: UpdatePublisherDto) {
     return this.publishersService.update(id, publisher);
   }
 
   @Delete(':id')
-  @CacheEvict(PUBLISHERS_LIST_CACHE_KEY)
-  @CacheEvict(PUBLISHER_CACHE_KEY)
+  @CacheEvict([
+    PUBLISHERS_LIST_CACHE_KEY,
+    PUBLISHER_CACHE_KEY,
+    PUBLISHER_WEBSITES_CACHE_KEY,
+  ])
   delete(@Param('id') id: number) {
     return this.publishersService.delete(id);
+  }
+
+  @Get(':id/websites')
+  @Cacheable({ ttl: 60, key: PUBLISHER_WEBSITES_CACHE_KEY })
+  listWebsites(@Param('id') id: number) {
+    return this.publishersService.listWebsites(id);
   }
 }
